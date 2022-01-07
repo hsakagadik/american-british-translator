@@ -46,7 +46,7 @@ suite('Unit Tests', () => {
 
     test('Translate "To play hooky means to skip class or work." to British English', function () {
         const text = "To play hooky means to skip class or work.";
-        const translated = "To play bunk off means to skip class or work.";
+        const translated = "To bunk off means to skip class or work.";
         assert.deepEqual(translate.translateToBritish(text), translated, 'should translate "To play hooky means to skip class or work." to British English');
     });
 
@@ -114,7 +114,7 @@ suite('Unit Tests', () => {
 
     test('Translate "Have you met Mrs Kalyani?" to American English', function () {
         const text = "Have you met Mrs Kalyani?";
-        const translated = "Have you met Mrs Kalyani?";
+        const translated = "Have you met Mrs. Kalyani?";
         assert.deepEqual(translate.translateToAmerican(text), translated, 'should translate "Have you met Mrs Kalyani?" to American English');
     });
 
@@ -134,18 +134,22 @@ suite('Unit Tests', () => {
     // -- Highlight translation -- // 
 
     test('Highlight translation in "Mangoes are my favorite fruit."', function () {
+        assert.fail();
         assert.deepEqual('', '', 'should highlight translation in "Mangoes are my favorite fruit." ');
     });
 
     test('Highlight translation in "I ate yogurt for breakfast."', function () {
+        assert.fail();
         assert.deepEqual('', '', 'should highlight translation in "I ate yogurt for breakfast."');
     });
 
     test('Highlight translation in "We watched the footie match for a while."', function () {
+        assert.fail();
         assert.deepEqual('', '', 'should highlight translation in "We watched the footie match for a while."');
     });
 
     test('Highlight translation in "Paracetamol takes up to an hour to work."', function () {
+        assert.fail();
         assert.deepEqual('', '', 'should highlight translation in "Paracetamol takes up to an hour to work."');
     });
 

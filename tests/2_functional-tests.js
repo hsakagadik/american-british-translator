@@ -9,7 +9,7 @@ let Translator = require('../components/translator.js');
 
 suite('Functional Tests', () => {
     test('Translation with text and locale fields: POST request to /api/translate', function (done) {
-        const body = { text: '', locale: 'american-to-british' };
+        const body = {text: '', locale: 'american-to-british'};
         chai.request(server)
             .post('/api/translate')
             .send(body)
@@ -20,7 +20,7 @@ suite('Functional Tests', () => {
     });
 
     test('Translation with text and invalid locale field: POST request to /api/translate', function (done) {
-        const body = { text: '', locale: 'americanbritish' };
+        const body = {text: '', locale: 'americanbritish'};
         chai.request(server)
             .post('/api/translate')
             .send(body)
@@ -31,7 +31,7 @@ suite('Functional Tests', () => {
     });
 
     test('Translation with missing text field: POST request to /api/translate', function (done) {
-        const body = { locale: 'american-to-british' };
+        const body = {locale: 'american-to-british'};
         chai.request(server)
             .post('/api/translate')
             .send(body)
@@ -42,7 +42,7 @@ suite('Functional Tests', () => {
     });
 
     test('Translation with missing locale field: POST request to /api/translate', function (done) {
-        const body = { text: '' };
+        const body = {text: ''};
         chai.request(server)
             .post('/api/translate')
             .send(body)
@@ -53,7 +53,7 @@ suite('Functional Tests', () => {
     });
 
     test('Translation with empty text: POST request to /api/translate', function (done) {
-        const body = { text: '', locale: 'american-to-british' };
+        const body = {text: '', locale: 'american-to-british'};
         chai.request(server)
             .post('/api/translate')
             .send(body)
@@ -64,7 +64,7 @@ suite('Functional Tests', () => {
     });
 
     test('Translation with text that needs no translation: POST request to /api/translate', function (done) {
-        const body = { text: '', locale: 'american-to-british' };
+        const body = {text: '', locale: 'american-to-british'};
         chai.request(server)
             .post('/api/translate')
             .send(body)
