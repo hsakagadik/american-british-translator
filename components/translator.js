@@ -52,7 +52,9 @@ class Translator {
         }
 
         if (timeRegex.test(originalText)) {
-            translatedText = originalText.replace('.', ':');
+            const hour = originalText.match(timeRegex)[0];
+            const highlightHour = `<span class="highlight">${hour.replace('.',':')}</span>`;
+            translatedText = originalText.replace(hour, highlightHour);
         }
 
         // Replace for translated words found
@@ -120,7 +122,9 @@ class Translator {
         }
 
         if (timeRegex.test(originalText)) {
-            translatedText = originalText.replace(':', '.');
+            const hour = originalText.match(timeRegex)[0];
+            const highlightHour = `<span class="highlight">${hour.replace(':','.')}</span>`;
+            translatedText = originalText.replace(hour, highlightHour);
         }
 
         // Replace for translated words found
