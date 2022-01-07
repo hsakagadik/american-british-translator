@@ -134,23 +134,27 @@ suite('Unit Tests', () => {
     // -- Highlight translation -- // 
 
     test('Highlight translation in "Mangoes are my favorite fruit."', function () {
-        assert.fail();
-        assert.deepEqual('', '', 'should highlight translation in "Mangoes are my favorite fruit." ');
+        const text = 'Mangoes are my favorite fruit.';
+        const translated = 'Mangoes are my <span class="highlight">favourite</span> fruit.';
+        assert.deepEqual(translate.translateToBritish(text), translated, 'should highlight translation in "Mangoes are my favorite fruit." ');
     });
 
     test('Highlight translation in "I ate yogurt for breakfast."', function () {
-        assert.fail();
-        assert.deepEqual('', '', 'should highlight translation in "I ate yogurt for breakfast."');
+        const text = 'I ate yogurt for breakfast.';
+        const translated = 'I ate <span class="highlight">yoghurt</span> for breakfast.';
+        assert.deepEqual(translate.translateToBritish(text), translated, 'should highlight translation in "I ate yogurt for breakfast."');
     });
 
     test('Highlight translation in "We watched the footie match for a while."', function () {
-        assert.fail();
-        assert.deepEqual('', '', 'should highlight translation in "We watched the footie match for a while."');
+        const text = 'We watched the footie match for a while.';
+        const translated = 'We watched the <span class="highlight">soccer match</span> for a while.';
+        assert.deepEqual(translate.translateToAmerican(text), translated, 'should highlight translation in "We watched the footie match for a while."');
     });
 
     test('Highlight translation in "Paracetamol takes up to an hour to work."', function () {
-        assert.fail();
-        assert.deepEqual('', '', 'should highlight translation in "Paracetamol takes up to an hour to work."');
+        const text = 'Paracetamol takes up to an hour to work.';
+        const translated = '<span class="highlight">Tylenol</span> takes up to an hour to work.';
+        assert.deepEqual(translate.translateToAmerican(text), translated, 'should highlight translation in "Paracetamol takes up to an hour to work."');
     });
 
 });
