@@ -3,24 +3,60 @@ const americanToBritishSpelling = require('./american-to-british-spelling.js');
 const americanToBritishTitles = require("./american-to-british-titles.js")
 const britishOnly = require('./british-only.js')
 
-const reverseDictonary = (obj) =>
+const reverseDictionary = (obj) =>
     Object.assign({}, ...Object.entries(obj).map(([k, v]) => ({[v]: k})));
 
 const capitalizeFirstLetter = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
+const searchTitlesToTranslateOnText = (text, titlesDictionary) => Object.entries(titlesDictionary).filter(([a]) => text.split(' ').includes(a));
+
+const searchWordsWithSpacesToTranslateOnText = (text, dictionary) => {
+    const wordsWithSpaces = Object.entries(dictionary).filter(([a]) => a.includes(" "));
+    return wordsWithSpaces.filter(([a]) => text.toLowerCase().includes(a));
+};
+
+const searchWordsToTranslateOnText = (text, dictionary) => Object.entries(dictionary).filter(([a]) => text.toLowerCase().split(' ').includes(a));
+
+const replaceWithWordsFromArray = (array, text) => {
+    array.forEach((word) => {
+        word.forEach(([american, british]) => {
+            const highlightTranslated = `<span class=\"highlight\">${british}</span>`;
+            text = text.replace(new RegExp(american, "gi"), highlightTranslated);
+        })
+    })
+    return text;
+}
+
 class Translator {
 
-    translateToAmerican(text) {
+    translate(text, locale) {
         let originalText = text;
-        const britishAmericanDictonary = {
-            ...britishOnly,
-            ...reverseDictonary(americanToBritishSpelling),
-        };
-        const britishToAmericanTitles = reverseDictonary(americanToBritishTitles);
-        const timeRegex = new RegExp(/\d{1,2}\.\d{1,2}/gm);
+        let dictionary;
+        let titlesDictionary;
+        let timeRegex;
+        let timeTranslation;
 
-        // Save last character
-        const lastCharRegex = new RegExp(/[\?\!\.]+/gm);
+        if (locale === 'american-to-british') {
+            dictionary = {
+                ...americanOnly,
+                ...americanToBritishSpelling,
+            };
+            titlesDictionary = americanToBritishTitles;
+            timeRegex = new RegExp(/\d{1,2}:\d{1,2}/gm);
+            timeTranslation = [":", "."];
+
+        } else if (locale === 'british-to-american') {
+            dictionary = {
+                ...britishOnly,
+                ...reverseDictionary(americanToBritishSpelling),
+            };
+            titlesDictionary = reverseDictionary(americanToBritishTitles);
+            timeRegex = new RegExp(/\d{1,2}\.\d{1,2}/gm);
+            timeTranslation = [".", ":"];
+        }
+
+        // Save and remove last character
+        const lastCharRegex = new RegExp(/[?!.]+/gm);
         let lastChar;
         if (lastCharRegex.test(originalText)) {
             lastChar = originalText.charAt(originalText.length - 1);
@@ -29,122 +65,33 @@ class Translator {
 
         let translatedText = originalText;
 
-        // For collect words
-        const textToTranslate = [];
+        // Collect words to translate
+        const textToTranslate = [
+            searchTitlesToTranslateOnText(originalText, titlesDictionary),
+            searchWordsWithSpacesToTranslateOnText(originalText, dictionary),
+            searchWordsToTranslateOnText(originalText, dictionary)
+        ].filter(e => e.length > 0);
 
-        // Search for titles to translate
-        const translatedTitles = Object.entries(britishToAmericanTitles).filter(([a, b]) => originalText.split(' ').includes(a));
-        if (translatedTitles.length > 0) {
-            textToTranslate.push(translatedTitles);
+        // Replace for translated words found
+        if (textToTranslate.length > 0) {
+            translatedText = replaceWithWordsFromArray(textToTranslate, translatedText);
         }
 
-        // Search words with spaces to translate
-        const wordsWithSpaces = Object.entries(britishAmericanDictonary).filter(([a, b]) => a.includes(" "));
-        const translatedWordsWithSpaces = wordsWithSpaces.filter(([a, b]) => originalText.toLowerCase().includes(a));
-        if (translatedWordsWithSpaces.length > 0) {
-            textToTranslate.push(translatedWordsWithSpaces);
-        }
-
-        // Search words to translate
-        const translatedDictonary = Object.entries(britishAmericanDictonary).filter(([a, b]) => originalText.toLowerCase().split(' ').includes(a));
-        if (translatedDictonary.length > 0) {
-            textToTranslate.push(translatedDictonary);
-        }
-
+        // Translate hour format
         if (timeRegex.test(originalText)) {
             const hour = originalText.match(timeRegex)[0];
-            const highlightHour = `<span class="highlight">${hour.replace('.',':')}</span>`;
+            const highlightHour = `<span class="highlight">${hour.replace(timeTranslation[0], timeTranslation[1])}</span>`;
             translatedText = originalText.replace(hour, highlightHour);
         }
 
-        // Replace for translated words found
-        if(textToTranslate.length > 0){
-            textToTranslate.forEach((word) => {
-                word.forEach(([american, british]) => {
-                    const highlightTranslated = `<span class=\"highlight\">${british}</span>`;
-                    translatedText = translatedText.replace(new RegExp(american, "gi"), highlightTranslated);
-                })
-            })
-        }
-
-        // Retrieve translated text to British with first letter in uppercase
-        if(translatedText === undefined && translatedText === originalText){
+        // Retrieve original text if none words found to translate
+        if (translatedText === undefined && translatedText === originalText) {
             return originalText;
         }
 
         // Prepare translated text
         translatedText = capitalizeFirstLetter(translatedText);
-        if(lastChar !== undefined){
-            translatedText = translatedText.concat(lastChar);
-        }
-
-        return translatedText;
-    }
-
-    translateToBritish(text) {
-        let originalText = text;
-        const americanBritishDictonary = {
-            ...americanOnly,
-            ...americanToBritishSpelling,
-        };
-        const timeRegex = new RegExp(/\d{1,2}\:\d{1,2}/gm);
-
-        // Save last character
-        const lastCharRegex = new RegExp(/[\?\!\.]+/gm);
-        let lastChar;
-        if (lastCharRegex.test(originalText)) {
-            lastChar = originalText.charAt(originalText.length - 1);
-            originalText = originalText.slice(0, -1);
-        }
-
-        let translatedText = originalText;
-
-        // For collect words
-        const textToTranslate = [];
-
-        // Search for titles to translate
-        const translatedTitles = Object.entries(americanToBritishTitles).filter(([a, b]) => originalText.includes(a));
-        if (translatedTitles.length > 0) {
-            textToTranslate.push(translatedTitles);
-        }
-
-        // Search words with spaces to translate
-        const wordsWithSpaces = Object.entries(americanBritishDictonary).filter(([a, b]) => a.includes(" "));
-        const translatedWordsWithSpaces = wordsWithSpaces.filter(([a, b]) => originalText.toLowerCase().includes(a));
-        if (translatedWordsWithSpaces.length > 0) {
-            textToTranslate.push(translatedWordsWithSpaces);
-        }
-
-        // Search words to translate
-        const translatedDictonary = Object.entries(americanBritishDictonary).filter(([a, b]) => originalText.toLowerCase().split(' ').includes(a));
-        if (translatedDictonary.length > 0) {
-            textToTranslate.push(translatedDictonary);
-        }
-
-        if (timeRegex.test(originalText)) {
-            const hour = originalText.match(timeRegex)[0];
-            const highlightHour = `<span class="highlight">${hour.replace(':','.')}</span>`;
-            translatedText = originalText.replace(hour, highlightHour);
-        }
-
-        // Replace for translated words found
-        if(textToTranslate.length > 0){
-            textToTranslate.forEach((word) => {
-                word.forEach(([american, british]) => {
-                    const highlightTranslated = `<span class=\"highlight\">${british}</span>`;
-                    translatedText = translatedText.replace(new RegExp(american, "gi"), highlightTranslated);
-                })
-            })
-        }
-
-        // Retrieve translated text to British with first letter in uppercase
-        if(translatedText === undefined && translatedText === originalText){
-            return originalText;
-        }
-
-        // Prepare translated text
-        translatedText = capitalizeFirstLetter(translatedText);
-        if(lastChar !== undefined){
+        if (lastChar !== undefined) {
             translatedText = translatedText.concat(lastChar);
         }
 
