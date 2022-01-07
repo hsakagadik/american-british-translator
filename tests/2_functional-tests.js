@@ -19,7 +19,7 @@ suite('Functional Tests', () => {
     });
 
     test('Translation with text and invalid locale field: POST request to /api/translate', function (done) {
-        const body = {text: '', locale: 'americanbritish'};
+        const body = {text: 'Mangoes are my favorite fruit.', locale: 'americanbritish'};
         const invalidLocaleError = { error: 'Invalid value for locale field' };
         chai.request(server)
             .post('/api/translate')
@@ -67,7 +67,7 @@ suite('Functional Tests', () => {
     });
 
     test('Translation with text that needs no translation: POST request to /api/translate', function (done) {
-        const body = {text: '', locale: 'american-to-british'};
+        const body = {text: 'Hi no need to translate', locale: 'american-to-british'};
         const looksGoodRes = {translation: "Everything looks good to me!"}
         chai.request(server)
             .post('/api/translate')
