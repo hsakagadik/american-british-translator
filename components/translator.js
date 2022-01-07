@@ -59,7 +59,8 @@ class Translator {
         if(textToTranslate.length > 0){
             textToTranslate.forEach((word) => {
                 word.forEach(([american, british]) => {
-                    translatedText = translatedText.replace(new RegExp(american, "gi"), british);
+                    const highlightTranslated = `<span class=\"highlight\">${british}</span>`;
+                    translatedText = translatedText.replace(new RegExp(american, "gi"), highlightTranslated);
                 })
             })
         }
@@ -126,7 +127,8 @@ class Translator {
         if(textToTranslate.length > 0){
             textToTranslate.forEach((word) => {
                 word.forEach(([american, british]) => {
-                    translatedText = originalText.replace(new RegExp(american, "gi"), british);
+                    const highlightTranslated = `<span class=\"highlight\">${british}</span>`;
+                    translatedText = translatedText.replace(new RegExp(american, "gi"), highlightTranslated);
                 })
             })
         }

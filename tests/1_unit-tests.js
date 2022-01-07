@@ -147,7 +147,7 @@ suite('Unit Tests', () => {
 
     test('Highlight translation in "We watched the footie match for a while."', function () {
         const text = 'We watched the footie match for a while.';
-        const translated = 'We watched the <span class="highlight">soccer match</span> for a while.';
+        const translated = 'We watched the <span class="highlight">soccer</span> match for a while.';
         assert.deepEqual(translate.translateToAmerican(text), translated, 'should highlight translation in "We watched the footie match for a while."');
     });
 
